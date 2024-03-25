@@ -1,7 +1,15 @@
-# Vue 3 + Vite
+## 1.web
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+npm run dev
 
-## Recommended IDE Setup
+启动 web 服务，custom 表示客服，user 表示用户
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## 2.socket
+
+进入 serve 文件夹
+
+node app.js 启动 socket 服务
+
+## 3. 如果需要 electron 端
+
+请访问 https://github.com/yeshaojun/webrtc_electron
