@@ -48,9 +48,13 @@ socket.on("connect", () => {
       console.log("数据通道 链接成功!");
     };
 
-    channel.value.onmessage = (e) => {
-      const m = JSON.parse(e.data);
-      console.log("channel onmessage", m);
+    channel.value.onmessage = (event) => {
+      console.log("event", event);
+      var eventData = JSON.parse(event.data);
+      if (eventData.type === "scroll") {
+        // 执行滚动操作
+        window.scrollBy(0, -eventData.delta * 50); // 50 是滚动速度，可以根据需要调整
+      }
     };
 
     // peer.value.ondatachannel = function (event) {
@@ -88,13 +92,6 @@ socket.on("connect", () => {
 
     // 通过信令服务器发送到对端
     socket.emit("offer", offer);
-    const userMouse = document.createElement("div");
-    userMouse.id = "userMouse";
-    userMouse.style.width = "10px";
-    userMouse.style.height = "10px";
-    userMouse.style.backgroundColor = "red";
-    userMouse.style.position = "absolute";
-    document.body.appendChild(userMouse);
     socket.on("mousemove", (params) => {
       console.log("mousemove", params);
       userMouse.style.left = params.x + "px";

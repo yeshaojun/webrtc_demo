@@ -16,7 +16,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("offer", (params) => {
-    console.log("offer", params);
     socket.broadcast.emit("offer", params);
   });
 
@@ -34,6 +33,10 @@ io.on("connection", (socket) => {
 
   socket.on("mousemove", (params) => {
     socket.broadcast.emit("mousemove", params);
+  });
+
+  socket.on("stream", (params) => {
+    console.log("params", params);
   });
 });
 

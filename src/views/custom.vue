@@ -2,6 +2,7 @@
   custom
   <video id="remote-control" style="height: 100%" autoplay />
   <button @click="connect">click me</button>
+  <button @click="test">test</button>
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
@@ -11,6 +12,7 @@ import { io } from "socket.io-client";
 const socket = io("");
 const channel = ref();
 socket.on("connect", () => {
+  console.log("connect");
   // 1.初始化peer
   const PeerConnection =
     window.RTCPeerConnection ||
@@ -19,53 +21,63 @@ socket.on("connect", () => {
   peer.value = new PeerConnection({
     iceServers: [
       {
-        urls: ["stun:stun.l.google.com:19302"],
+        urls: ["stun:stun1.l.google.com:19302"],
       },
       {
         urls: ["turn:wangxiang.website:3478"],
         username: "admin",
         credential: "admin",
       },
+      // {
+      //   urls: "turn:numb.viagenie.ca",
+      //   credential: "muazkh",
+      //   username: "webrtc@live.com",
+      // },
+      // {
+      //   urls: "turn:192.158.29.39:3478?transport=udp",
+      //   credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+      //   username: "28224511:1379330808",
+      // },
+      // {
+      //   urls: "turn:192.158.29.39:3478?transport=tcp",
+      //   credential: "JZEOEt2V3Qb0y27GRntt2u2PAYA=",
+      //   username: "28224511:1379330808",
+      // },
+      // {
+      //   urls: "turn:turn.bistri.com:80",
+      //   credential: "homeo",
+      //   username: "homeo",
+      // },
+      // {
+      //   urls: "turn:turn.anyfirewall.com:443?transport=tcp",
+      //   credential: "webrtc",
+      //   username: "webrtc",
+      // },
     ],
   });
 
-  // 2.创建数据通道
-  // channel.value = peer.value.createDataChannel("messagechannel");
-  // console.log("数据通道", channel.value);
-  // channel.value.onopen = (event) => {
-  //   console.log("数据通道 链接成功!");
-
-  //   document.addEventListener("mousewheel", (e) => {
-  //     const msg = {};
-  //     msg.type = 4;
-  //     if (e.wheelDelta < 0) {
-  //       msg.event = 3;
-  //     } else {
-  //       msg.event = 2;
-  //     }
-  //     channel.value.send(JSON.stringify(msg));
-  //   });
-  // };
-
-  // channel.value.onmessage = (e) => {
-  //   const m = JSON.parse(e.data);
-  //   console.log("channel onmessage", m);
-  // };
-
   peer.value.ondatachannel = function (event) {
     var channel = event.channel;
-    channel.onopen = function (event) {
+    channel.onopen = function () {
       console.log("onopen");
-      // channel.send("Hi back!");
-      document.addEventListener("mousewheel", (e) => {
-        const msg = {};
-        msg.type = 4;
-        if (e.wheelDelta < 0) {
-          msg.event = 3;
-        } else {
-          msg.event = 2;
-        }
-        channel.send(JSON.stringify(msg));
+      document.addEventListener("wheel", (event) => {
+        console.log(
+          "wheel",
+          JSON.stringify({ x: event.clientX, y: event.clientY })
+        );
+        channel.send(
+          JSON.stringify({ x: event.clientX, y: event.clientY, type: "scroll" })
+        );
+      });
+
+      document.addEventListener("click", (event) => {
+        console.log(
+          "click",
+          JSON.stringify({ x: event.clientX, y: event.clientY })
+        );
+        channel.send(
+          JSON.stringify({ x: event.clientX, y: event.clientY, type: "click" })
+        );
       });
     };
     channel.onmessage = function (event) {
@@ -110,6 +122,12 @@ socket.on("connect", () => {
     }
   };
 });
+
+function test() {
+  var params = encodeURIComponent("param1=value1&param2=value2"); // 你要传递的参数
+  var url = "remote://custom-path?" + params;
+  window.location.href = url;
+}
 
 function connect() {
   // 3.发送ready消息
